@@ -62,10 +62,6 @@ const renderNavigatorContent = () => {
 
         const favIconUrl = tab.favIconUrl || chrome.runtime.getURL("icon128.png");
 
-<<<<<<< Updated upstream
-        // --- CHANGE --- Use a 'P' character for the pin button
-=======
->>>>>>> Stashed changes
         const pinTitle = tab.pinned ? 'Unpin Tab' : 'Pin Tab';
 
         li.innerHTML = `
@@ -77,31 +73,17 @@ const renderNavigatorContent = () => {
         `;
 
         li.addEventListener('click', (e) => {
-<<<<<<< Updated upstream
-             // Only switch if the click was not on one of the buttons
-=======
->>>>>>> Stashed changes
              if (!e.target.closest('button')) {
                 chrome.runtime.sendMessage({ action: 'switchToTab', tabId: tab.id });
                 closeNavigator();
              }
         });
 
-<<<<<<< Updated upstream
-        // Add event listeners for the new buttons
-        const pinBtn = li.querySelector('.pin-tab-btn');
-        pinBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent the li click event from firing
-            const newPinnedState = !tab.pinned;
-            chrome.runtime.sendMessage({ action: 'togglePin', tabId: tab.id, pinnedState: newPinnedState });
-            // Refresh the list to show the change
-=======
         const pinBtn = li.querySelector('.pin-tab-btn');
         pinBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             const newPinnedState = !tab.pinned;
             chrome.runtime.sendMessage({ action: 'togglePin', tabId: tab.id, pinnedState: newPinnedState });
->>>>>>> Stashed changes
             closeNavigator();
             setTimeout(openNavigator, 50);
         });
@@ -140,15 +122,20 @@ const renderNavigatorContent = () => {
 const openNavigator = () => {
     if (isNavigatorOpen) return;
     
-    // --- THIS IS THE CHANGE ---
     // First, get the zoom factor, then get the tabs and create the UI.
     chrome.runtime.sendMessage({ action: 'getZoom' }, (zoomResponse) => {
-        const zoomFactor = zoomResponse.zoomFactor || 1;
+        // Add error handling to prevent crashes
+        if (chrome.runtime.lastError) {
+            console.error("Tab Navigator zoom error:", chrome.runtime.lastError.message);
+            return;
+        }
+
+        const zoomFactor = zoomResponse ? zoomResponse.zoomFactor : 1;
         const scale = 1 / zoomFactor;
 
         chrome.runtime.sendMessage({ action: 'getTabs' }, (tabsResponse) => {
-            if (!tabsResponse || !tabsResponse.tabs) {
-                console.error("Tab Navigator: Could not get tabs from background script.");
+            if (chrome.runtime.lastError || !tabsResponse || !tabsResponse.tabs) {
+                console.error("Tab Navigator tabs error:", chrome.runtime.lastError?.message || "No response");
                 return;
             }
             currentTabs = tabsResponse.tabs;
@@ -166,7 +153,6 @@ const openNavigator = () => {
             document.addEventListener('keydown', handleKeyDown, true);
         });
     });
-    // --- END OF CHANGE ---
 };
 
 // This function removes the modal and stops listening for events.

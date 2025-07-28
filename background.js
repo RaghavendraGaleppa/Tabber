@@ -41,24 +41,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.tabs.remove(request.tabId);
   }
 
-<<<<<<< Updated upstream
-  // --- NEW --- If the content script wants to pin or unpin a tab...
-  if (request.action === "togglePin") {
-    chrome.tabs.update(request.tabId, { pinned: request.pinnedState });
-  }
-=======
   // If the content script wants to pin or unpin a tab...
   if (request.action === "togglePin") {
     chrome.tabs.update(request.tabId, { pinned: request.pinnedState });
   }
 
-  // --- NEW --- If the content script wants the page's zoom factor...
+  // If the content script wants the page's zoom factor...
   if (request.action === "getZoom") {
-    chrome.tabs.getZoom(sender.tab.id, (zoomFactor) => {
-      sendResponse({ zoomFactor: zoomFactor });
-    });
-    return true; // Required for async response
+    // Make sure the message is coming from a tab before proceeding
+    if (sender.tab && sender.tab.id) {
+        chrome.tabs.getZoom(sender.tab.id, (zoomFactor) => {
+            sendResponse({ zoomFactor: zoomFactor });
+        });
+        return true; // Required for async response
+    }
   }
->>>>>>> Stashed changes
-  // --- END NEW ---
 });
