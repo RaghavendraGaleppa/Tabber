@@ -15,25 +15,20 @@ chrome.commands.onCommand.addListener((command) => {
   }
 });
 
-// 2. Listen for messages coming from other parts of our extension (mainly content.js).
+// 2. Listen for messages coming from other parts of our extension.
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // If the content script is asking for the list of tabs...
   if (request.action === "getTabs") {
-    // Get all tabs in the current window. The default order is the visual tab order.
     chrome.tabs.query({ currentWindow: true }, (tabs) => {
-      // Send the tabs array directly back to the content script.
       sendResponse({ tabs: tabs });
     });
-    return true; // Important: tells Chrome we will send a response later.
+    return true;
   }
   
   // If the content script wants to switch to a specific tab...
   if (request.action === "switchToTab") {
-    // Get the tab's ID from the request.
     const tabId = request.tabId;
-    // Tell the browser to make that tab active.
     chrome.tabs.update(tabId, { active: true });
-    // Also focus the window that the tab is in.
     chrome.tabs.get(tabId, (tab) => {
         if(tab.windowId) {
             chrome.windows.update(tab.windowId, { focused: true });
@@ -46,9 +41,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.tabs.remove(request.tabId);
   }
 
+<<<<<<< Updated upstream
   // --- NEW --- If the content script wants to pin or unpin a tab...
   if (request.action === "togglePin") {
     chrome.tabs.update(request.tabId, { pinned: request.pinnedState });
   }
+=======
+  // If the content script wants to pin or unpin a tab...
+  if (request.action === "togglePin") {
+    chrome.tabs.update(request.tabId, { pinned: request.pinnedState });
+  }
+
+  // --- NEW --- If the content script wants the page's zoom factor...
+  if (request.action === "getZoom") {
+    chrome.tabs.getZoom(sender.tab.id, (zoomFactor) => {
+      sendResponse({ zoomFactor: zoomFactor });
+    });
+    return true; // Required for async response
+  }
+>>>>>>> Stashed changes
   // --- END NEW ---
 });
