@@ -9,18 +9,14 @@ const HINT_CHARS = '1234567890qwertyuiopasdfghjkl'.split('');
 const handleKeyDown = (event) => {
     if (!isNavigatorOpen) return;
 
-    // This is the key fix. We stop the event from propagating to the browser's
-    // native listeners, which prevents the default Alt+Number behavior.
     event.preventDefault();
     event.stopImmediatePropagation();
 
-    // Handle Escape to close
     if (event.key === 'Escape') {
         closeNavigator();
         return;
     }
     
-    // Handle pagination with Tab and Shift+Tab
     if (event.key === 'Tab') {
         const totalPages = Math.ceil(currentTabs.length / TABS_PER_PAGE);
         if (event.shiftKey) {
@@ -32,7 +28,6 @@ const handleKeyDown = (event) => {
         return;
     }
 
-    // Handle hint character selection
     const keyAsHint = event.key.toLowerCase();
     const hintIndex = HINT_CHARS.indexOf(keyAsHint);
     
@@ -67,22 +62,41 @@ const renderNavigatorContent = () => {
 
         const favIconUrl = tab.favIconUrl || chrome.runtime.getURL("icon128.png");
 
+        // --- CHANGE --- Add the close button to the HTML structure
         li.innerHTML = `
             <span class="tab-hint">${hintChar.toUpperCase()}</span>
             <img class="tab-favicon" src="${favIconUrl}" />
             <span class="tab-title">${tab.title}</span>
+            <button class="close-tab-btn" data-tab-id="${tab.id}">&times;</button>
         `;
+        // --- END CHANGE ---
 
-        li.addEventListener('click', () => {
-             chrome.runtime.sendMessage({ action: 'switchToTab', tabId: tab.id });
-             closeNavigator();
+        // Main click listener for the row (to switch tabs)
+        li.addEventListener('click', (e) => {
+             // Only switch if the click was not on the close button
+             if (e.target.className !== 'close-tab-btn') {
+                chrome.runtime.sendMessage({ action: 'switchToTab', tabId: tab.id });
+                closeNavigator();
+             }
         });
 
         listEl.appendChild(li);
     });
     
-    // --- THIS IS THE CHANGE ---
-    // Update the footer to include the buttons and page info.
+    // --- NEW --- Add event listeners for all close buttons after they are created
+    listEl.querySelectorAll('.close-tab-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent the li click event from firing
+            const tabIdToClose = parseInt(e.target.dataset.tabId);
+            chrome.runtime.sendMessage({ action: 'closeTab', tabId: tabIdToClose });
+            
+            // To refresh the list, we simply re-open the navigator
+            closeNavigator();
+            setTimeout(openNavigator, 50); // A small delay to allow the tab to close
+        });
+    });
+    // --- END NEW ---
+
     const footerEl = navigatorEl.querySelector('#tab-navigator-footer');
     const totalPages = Math.ceil(currentTabs.length / TABS_PER_PAGE);
     footerEl.innerHTML = `
@@ -91,7 +105,6 @@ const renderNavigatorContent = () => {
         <button id="next-page-btn" class="page-button">Next &gt;</button>
     `;
 
-    // Add event listeners to the new buttons.
     footerEl.querySelector('#prev-page-btn').addEventListener('click', () => {
         currentPage = (currentPage - 1 + totalPages) % totalPages;
         renderNavigatorContent();
@@ -101,7 +114,6 @@ const renderNavigatorContent = () => {
         currentPage = (currentPage + 1) % totalPages;
         renderNavigatorContent();
     });
-    // --- END OF CHANGE ---
 };
 
 // This function creates and displays the main navigator modal.
@@ -118,11 +130,9 @@ const openNavigator = () => {
         isNavigatorOpen = true;
         navigatorEl = document.createElement('div');
         navigatorEl.id = 'tab-navigator-modal';
-        // The footer is now created here but populated in renderNavigatorContent
         navigatorEl.innerHTML = `<ul></ul><div id="tab-navigator-footer"></div>`;
         document.body.appendChild(navigatorEl);
         renderNavigatorContent();
-        // Use a single, unified keydown listener, captured in the "capture" phase.
         document.addEventListener('keydown', handleKeyDown, true);
     });
 };
@@ -131,7 +141,6 @@ const openNavigator = () => {
 const closeNavigator = () => {
     if (!isNavigatorOpen) return;
     isNavigatorOpen = false;
-    // Remove the single keydown listener
     document.removeEventListener('keydown', handleKeyDown, true);
     if (navigatorEl) {
         navigatorEl.remove();
