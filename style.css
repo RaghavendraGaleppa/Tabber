@@ -67,6 +67,34 @@
   flex-grow: 1; /* Allow the title to take up available space */
 }
 
+/* --- NEW --- Style for the pin button using opacity and color */
+.pin-tab-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  padding: 2px 6px;
+  margin-left: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out;
+  
+  /* Default "unpinned" state is dim and grey */
+  color: #abb2bf;
+  opacity: 0.5;
+}
+
+.pin-tab-btn:hover {
+  opacity: 1; /* Always show full opacity on hover */
+}
+
+/* The "pinned" state is bright and green */
+.pin-tab-btn.pinned {
+  color: #98c379;
+  opacity: 1;
+}
+/* --- END NEW --- */
+
+
 /* Style for the close button */
 .close-tab-btn {
   background: none;
@@ -74,8 +102,8 @@
   color: #abb2bf;
   font-size: 18px;
   font-weight: bold;
-  padding: 2px 8px; /* MODIFIED: Increased padding to match hint button */
-  margin-left: 10px; /* Space between title and button */
+  padding: 2px 8px;
+  margin-left: 5px; /* Reduced margin to bring buttons closer */
   cursor: pointer;
   border-radius: 4px;
 }
@@ -92,7 +120,7 @@
   padding: 8px 15px;
   font-size: 12px;
   display: flex;
-  justify-content: space-between; /* Positions items at start, center, and end */
+  justify-content: space-between;
   align-items: center;
   border-top: 1px solid #3e4451;
   color: #9da5b4;
