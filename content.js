@@ -62,13 +62,15 @@ const renderNavigatorContent = () => {
 
         const favIconUrl = tab.favIconUrl || chrome.runtime.getURL("icon128.png");
 
-        // --- CHANGE --- Add the pin button to the HTML structure
+        // --- CHANGE --- Use a 'P' character for the pin button
+        const pinTitle = tab.pinned ? 'Unpin Tab' : 'Pin Tab';
+
         li.innerHTML = `
             <span class="tab-hint">${hintChar.toUpperCase()}</span>
             <img class="tab-favicon" src="${favIconUrl}" />
             <span class="tab-title">${tab.title}</span>
-            <button class="pin-tab-btn ${tab.pinned ? 'pinned' : ''}" title="Pin Tab">📌</button>
-            <button class="close-tab-btn" title="Close Tab">&times;</button>
+            <button class="pin-tab-btn ${tab.pinned ? 'pinned' : ''}" title="${pinTitle}">P</button>
+            <button class="close-tab-btn" title="Close Tab">X</button>
         `;
         // --- END CHANGE ---
 
@@ -81,7 +83,7 @@ const renderNavigatorContent = () => {
              }
         });
 
-        // --- NEW --- Add event listeners for the new buttons
+        // Add event listeners for the new buttons
         const pinBtn = li.querySelector('.pin-tab-btn');
         pinBtn.addEventListener('click', (e) => {
             e.stopPropagation(); // Prevent the li click event from firing
@@ -99,7 +101,6 @@ const renderNavigatorContent = () => {
             closeNavigator();
             setTimeout(openNavigator, 50);
         });
-        // --- END NEW ---
 
         listEl.appendChild(li);
     });
