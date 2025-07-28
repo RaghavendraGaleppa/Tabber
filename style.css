@@ -1,0 +1,81 @@
+/* Main modal container */
+#tab-navigator-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    max-width: 90vw;
+    background-color: #282c34; /* Dark background */
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 2147483647; /* Ensure it's on top of everything */
+    color: #abb2bf; /* Light grey text color */
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    border: 1px solid #3e4451;
+  }
+  
+  /* The list of tabs */
+  #tab-navigator-modal ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 10px;
+    max-height: 450px; /* Prevent it from being too tall on pages with many tabs */
+    overflow-y: auto;
+  }
+  
+  /* Each individual tab item in the list */
+  #tab-navigator-modal li {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.1s ease-in-out;
+    cursor: pointer;
+  }
+  
+  /* Highlight effect when hovering over a tab */
+  #tab-navigator-modal li:hover {
+    background-color: #3e4451;
+    color: #e6e6e6;
+  }
+  
+  /* The hint character (1, 2, Q, W, etc.) */
+  #tab-navigator-modal .tab-hint {
+    font-weight: bold;
+    color: #61afef; /* A nice blue color */
+    background-color: rgba(97, 175, 239, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 15px;
+    font-family: 'Courier New', Courier, monospace;
+  }
+  
+  /* The tab's favicon */
+  #tab-navigator-modal .tab-favicon {
+    width: 16px;
+    height: 16px;
+    margin-right: 12px;
+    object-fit: contain;
+  }
+  
+  /* The tab's title */
+  #tab-navigator-modal .tab-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add "..." if the title is too long */
+  }
+  
+  /* The footer section for page numbers */
+  #tab-navigator-footer {
+    background-color: #21252b;
+    padding: 10px 15px;
+    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid #3e4451;
+    color: #9da5b4;
+  }
+  

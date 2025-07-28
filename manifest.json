@@ -1,0 +1,44 @@
+{
+    "manifest_version": 3,
+    "name": "Tab Navigator",
+    "version": "1.2",
+    "description": "A keyboard-first way to find and switch to any open tab.",
+  
+    "permissions": [
+      "tabs"
+    ],
+  
+    "background": {
+      "service_worker": "background.js"
+    },
+  
+    "content_scripts": [
+      {
+        "matches": [
+          "<all_urls>"
+        ],
+        "js": [
+          "content.js"
+        ],
+        "css": [
+          "style.css"
+        ]
+      }
+    ],
+  
+    "commands": {
+      "toggle-navigator": {
+        "suggested_key": {
+          "default": "Alt+W"
+        },
+        "description": "Open Tab Navigator"
+      }
+    },
+    
+    "action": {},
+  
+    "icons": {
+      "128": "icon128.png"
+    }
+  }
+  
