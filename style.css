@@ -45,7 +45,7 @@
   font-weight: bold;
   color: #61afef; /* A nice blue color */
   background-color: rgba(97, 175, 239, 0.1);
-  padding: 2px 8px;
+  padding: 5px 8px; /* Increased vertical padding */
   border-radius: 4px;
   margin-right: 15px;
   font-family: 'Courier New', Courier, monospace;
@@ -67,22 +67,49 @@
   flex-grow: 1; /* Allow the title to take up available space */
 }
 
-/* Style for the close button */
-.close-tab-btn {
+/* Unified styles for action buttons */
+.pin-tab-btn, .close-tab-btn {
   background: none;
-  border: none;
+  border: 1px solid #5c6370; /* Default unfilled border */
   color: #abb2bf;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
-  padding: 2px 8px; /* MODIFIED: Increased padding to match hint button */
-  margin-left: 10px; /* Space between title and button */
+  padding: 5px 8px; /* MODIFIED: Increased vertical padding to match hint */
   cursor: pointer;
   border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.pin-tab-btn {
+  margin-left: 10px;
+}
+
+.close-tab-btn {
+  margin-left: 5px;
+}
+
+/* Pinned state: filled box */
+.pin-tab-btn.pinned {
+  background-color: #98c379; /* Green background */
+  color: #282c34; /* Dark text */
+  border-color: #98c379; /* Matching border */
+}
+
+/* Hover states */
+.pin-tab-btn:not(.pinned):hover {
+  background-color: #98c379; /* Green background on hover */
+  color: #282c34; /* Dark text on hover */
+  border-color: #98c379; /* Matching border on hover */
 }
 
 .close-tab-btn:hover {
-  background-color: #e06c75; /* Red background on hover */
-  color: #282c34; /* Dark text on hover */
+  background-color: #e06c75; /* Red background */
+  color: #282c34; /* Dark text */
+  border-color: #e06c75; /* Matching border */
 }
 
 
@@ -92,7 +119,7 @@
   padding: 8px 15px;
   font-size: 12px;
   display: flex;
-  justify-content: space-between; /* Positions items at start, center, and end */
+  justify-content: space-between;
   align-items: center;
   border-top: 1px solid #3e4451;
   color: #9da5b4;

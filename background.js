@@ -41,9 +41,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   }
 
-  // --- NEW --- If the content script wants to close a tab...
+  // If the content script wants to close a tab...
   if (request.action === "closeTab") {
     chrome.tabs.remove(request.tabId);
+  }
+
+  // --- NEW --- If the content script wants to pin or unpin a tab...
+  if (request.action === "togglePin") {
+    chrome.tabs.update(request.tabId, { pinned: request.pinnedState });
   }
   // --- END NEW ---
 });

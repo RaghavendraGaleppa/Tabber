@@ -62,41 +62,49 @@ const renderNavigatorContent = () => {
 
         const favIconUrl = tab.favIconUrl || chrome.runtime.getURL("icon128.png");
 
-        // --- CHANGE --- Add the close button to the HTML structure
+        // --- CHANGE --- Use a 'P' character for the pin button
+        const pinTitle = tab.pinned ? 'Unpin Tab' : 'Pin Tab';
+
         li.innerHTML = `
             <span class="tab-hint">${hintChar.toUpperCase()}</span>
             <img class="tab-favicon" src="${favIconUrl}" />
             <span class="tab-title">${tab.title}</span>
-            <button class="close-tab-btn" data-tab-id="${tab.id}">&times;</button>
+            <button class="pin-tab-btn ${tab.pinned ? 'pinned' : ''}" title="${pinTitle}">P</button>
+            <button class="close-tab-btn" title="Close Tab">X</button>
         `;
         // --- END CHANGE ---
 
         // Main click listener for the row (to switch tabs)
         li.addEventListener('click', (e) => {
-             // Only switch if the click was not on the close button
-             if (e.target.className !== 'close-tab-btn') {
+             // Only switch if the click was not on one of the buttons
+             if (!e.target.closest('button')) {
                 chrome.runtime.sendMessage({ action: 'switchToTab', tabId: tab.id });
                 closeNavigator();
              }
         });
 
+        // Add event listeners for the new buttons
+        const pinBtn = li.querySelector('.pin-tab-btn');
+        pinBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent the li click event from firing
+            const newPinnedState = !tab.pinned;
+            chrome.runtime.sendMessage({ action: 'togglePin', tabId: tab.id, pinnedState: newPinnedState });
+            // Refresh the list to show the change
+            closeNavigator();
+            setTimeout(openNavigator, 50);
+        });
+
+        const closeBtn = li.querySelector('.close-tab-btn');
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            chrome.runtime.sendMessage({ action: 'closeTab', tabId: tab.id });
+            closeNavigator();
+            setTimeout(openNavigator, 50);
+        });
+
         listEl.appendChild(li);
     });
     
-    // --- NEW --- Add event listeners for all close buttons after they are created
-    listEl.querySelectorAll('.close-tab-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevent the li click event from firing
-            const tabIdToClose = parseInt(e.target.dataset.tabId);
-            chrome.runtime.sendMessage({ action: 'closeTab', tabId: tabIdToClose });
-            
-            // To refresh the list, we simply re-open the navigator
-            closeNavigator();
-            setTimeout(openNavigator, 50); // A small delay to allow the tab to close
-        });
-    });
-    // --- END NEW ---
-
     const footerEl = navigatorEl.querySelector('#tab-navigator-footer');
     const totalPages = Math.ceil(currentTabs.length / TABS_PER_PAGE);
     footerEl.innerHTML = `
