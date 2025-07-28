@@ -21,7 +21,6 @@
   list-style-type: none;
   margin: 0;
   padding: 10px;
-  /* The max-height and overflow-y properties have been removed to prevent the scrollbar */
 }
 
 /* Each individual tab item in the list */
@@ -65,7 +64,27 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis; /* Add "..." if the title is too long */
+  flex-grow: 1; /* Allow the title to take up available space */
 }
+
+/* Style for the close button */
+.close-tab-btn {
+  background: none;
+  border: none;
+  color: #abb2bf;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 2px 8px; /* MODIFIED: Increased padding to match hint button */
+  margin-left: 10px; /* Space between title and button */
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.close-tab-btn:hover {
+  background-color: #e06c75; /* Red background on hover */
+  color: #282c34; /* Dark text on hover */
+}
+
 
 /* The footer section for page numbers */
 #tab-navigator-footer {
@@ -79,7 +98,7 @@
   color: #9da5b4;
 }
 
-/* New styles for the pagination buttons */
+/* Styles for the pagination buttons */
 .page-button {
   background-color: #3e4451;
   border: 1px solid #5c6370;
